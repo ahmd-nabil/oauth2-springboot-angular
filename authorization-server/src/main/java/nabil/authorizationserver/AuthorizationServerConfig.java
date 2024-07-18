@@ -32,6 +32,8 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -163,5 +165,26 @@ public class AuthorizationServerConfig {
 	@Bean
 	public AuthorizationServerSettings authorizationServerSettings() {
 		return AuthorizationServerSettings.builder().build();
+	}
+
+	@Bean
+	public OAuth2TokenCustomizer<JwtEncodingContext> jwtTokenCustomizer() {
+		return (context) -> {
+			if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
+				context.getClaims().claims((claims) -> {
+					Set<String> unmodifiableScopeSet = (Set) claims.getOrDefault("scope", new HashSet<>());
+					Set<String> userAuthorities = AuthorityUtils.authorityListToSet(context.getPrincipal().getAuthorities())
+							.stream()
+							.map(c -> c.replaceFirst("^ROLE_", ""))
+							.collect(Collectors.toSet());
+					Set<String> newScopes = new HashSet<>(unmodifiableScopeSet)
+							.stream()
+							.filter(userAuthorities::contains).collect(Collectors.toSet());
+					newScopes.addAll(userAuthorities);
+					Set<String> unmodifiableNewScopes = newScopes.stream().collect(Collectors.toUnmodifiableSet());
+					claims.put("scope", unmodifiableNewScopes);
+				});
+			}
+		};
 	}
 }
