@@ -4,7 +4,11 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +16,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,8 +24,7 @@ import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -83,11 +87,18 @@ public class AuthorizationServerConfig {
 
 	@Bean
 	public UserDetailsService userDetailsService() {
-		UserDetails userDetails = User.withDefaultPasswordEncoder()
-				.username("ahmed")
-				.password("1234")
-				.roles("admin")
-				.build();
+		List<UserDetails> userDetails = List.of(
+				User.withDefaultPasswordEncoder()
+					.username("ahmed")
+					.password("1234")
+					.roles("admin")
+					.build(),
+				User.withDefaultPasswordEncoder()
+					.username("nabil")
+					.password("1234")
+					.roles("user")
+					.build());
+
 
 		return new InMemoryUserDetailsManager(userDetails);
 	}
@@ -107,8 +118,8 @@ public class AuthorizationServerConfig {
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
 				.scopes(scopes -> {
-					scopes.add("read");
-					scopes.add("write");
+					scopes.add("admin");
+					scopes.add("user");
 				})
 				.clientSettings(ClientSettings.builder()
 						.requireAuthorizationConsent(false).build()
