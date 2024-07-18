@@ -1,5 +1,7 @@
 package nabil.resourceserver;
 
+import java.security.Principal;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,16 +18,22 @@ public class MainController {
         return "Hello World!";
     }
 
-    @PreAuthorize("hasAuthority('user')")
+    @PreAuthorize("#principal.authorities.?[authority.startsWith('user')].size() > 0")
     @GetMapping("/user")
-    public String user() {
+    public String user(Principal principal) {
         return "Hello User!";
     }
 
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("#principal.authorities.?[authority.startsWith('admin')].size() > 0")
     @GetMapping("/admin")
-    public String admin() {
+    public String admin(Principal principal) {
         return "Hello Admin!";
+    }
+
+    @PreAuthorize("#principal.authorities.?[authority.startsWith('king')].size() > 0")
+    @GetMapping("/king")
+    public String king(Principal principal) {
+        return "Hello King!";
     }
 
 }
