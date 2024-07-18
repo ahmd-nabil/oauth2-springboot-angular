@@ -71,7 +71,8 @@ public class AuthorizationServerConfig {
 			throws Exception {
 		http
 			.authorizeHttpRequests((authorize) -> authorize
-				.anyRequest().authenticated()
+					.requestMatchers("/.well-known/**").permitAll()
+					.anyRequest().authenticated()
 			)
 			// Form login handles the redirect to the login page from the
 			// authorization server filter chain
@@ -85,7 +86,7 @@ public class AuthorizationServerConfig {
 		UserDetails userDetails = User.withDefaultPasswordEncoder()
 				.username("ahmed")
 				.password("1234")
-				.roles("USER")
+				.roles("admin")
 				.build();
 
 		return new InMemoryUserDetailsManager(userDetails);
@@ -101,6 +102,8 @@ public class AuthorizationServerConfig {
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.redirectUri("http://127.0.0.1:4200/login/oauth2/code/oidc-client")
 				.postLogoutRedirectUri("http://127.0.0.1:9999/oauth2/authorize")
+				// for every client, I should add all scopes related to that client
+				// then for every request remove scopes that are not roles for that user (yet to search how to do that)
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
 				.scopes(scopes -> {
