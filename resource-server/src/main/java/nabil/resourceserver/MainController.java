@@ -1,7 +1,7 @@
 package nabil.resourceserver;
 
-import java.security.Principal;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,28 +12,28 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping
 public class MainController {
 
-    @GetMapping("/main") // just authenticated
-    public String main(Authentication authentication) {
+    @GetMapping(value = "/main", produces = "text/plain") // just authenticated
+    public ResponseEntity<String> main(Authentication authentication) {
         System.out.println(authentication.getAuthorities());
-        return "Hello World!";
+        return ResponseEntity.ok("Hello World!");
     }
 
-    @PreAuthorize("#principal.authorities.?[authority.startsWith('user')].size() > 0")
-    @GetMapping("/user")
-    public String user(Principal principal) {
-        return "Hello User!";
+    @PreAuthorize("#authentication.authorities.?[authority.startsWith('user')].size() > 0")
+    @GetMapping(value = "/user", produces = "text/plain")
+    public ResponseEntity<String> user(Authentication authentication) {
+        return ResponseEntity.ok("Hello User!");
     }
 
-    @PreAuthorize("#principal.authorities.?[authority.startsWith('admin')].size() > 0")
-    @GetMapping("/admin")
-    public String admin(Principal principal) {
-        return "Hello Admin!";
+    @PreAuthorize("#authentication.authorities.?[authority.startsWith('admin')].size() > 0")
+    @GetMapping(value = "/admin", produces = "text/plain")
+    public ResponseEntity<String> admin(Authentication authentication) {
+        return ResponseEntity.ok("Hello Admin!");
     }
 
-    @PreAuthorize("#principal.authorities.?[authority.startsWith('king')].size() > 0")
-    @GetMapping("/king")
-    public String king(Principal principal) {
-        return "Hello King!";
+    @PreAuthorize("#authentication.authorities.?[authority.startsWith('king')].size() > 0")
+    @GetMapping(value = "/king", produces = "text/plain")
+    public ResponseEntity<String> king(Authentication authentication) {
+        return ResponseEntity.ok("Hello King!");
     }
 
 }
