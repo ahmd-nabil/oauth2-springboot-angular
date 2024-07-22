@@ -209,11 +209,12 @@ public class AuthorizationServerConfig {
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(Arrays.asList("http://127.0.0.1:4200"));
+		configuration.setAllowedOrigins(List.of("*"));
 		configuration.setAllowedMethods(Arrays.asList("GET","POST","OPTIONS","PUT","DELETE","OPTIONS"));
-		configuration.setAllowedHeaders(Arrays.asList("*"));
-		configuration.setExposedHeaders(Arrays.asList("*"));
-		configuration.setAllowCredentials(true);
+		configuration.setAllowedHeaders(List.of("*"));
+		configuration.setExposedHeaders(List.of("*"));
+//		configuration.setAllowCredentials(true);
+		configuration.setMaxAge(0l);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
