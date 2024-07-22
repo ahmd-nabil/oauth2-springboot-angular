@@ -183,17 +183,18 @@ public class AuthorizationServerConfig {
 		return (context) -> {
 			if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
 				context.getClaims().claims((claims) -> {
-					Set<String> unmodifiableScopeSet = (Set) claims.getOrDefault("scope", new HashSet<>());
+//					Set<String> unmodifiableScopeSet = (Set) claims.getOrDefault("scope", new HashSet<>());
 					Set<String> userAuthorities = AuthorityUtils.authorityListToSet(context.getPrincipal().getAuthorities())
 							.stream()
 							.map(c -> c.replaceFirst("^ROLE_", ""))
 							.collect(Collectors.toSet());
-					Set<String> newScopes = new HashSet<>(unmodifiableScopeSet)
-							.stream()
-							.filter(userAuthorities::contains).collect(Collectors.toSet());
-					newScopes.addAll(userAuthorities);
-					Set<String> unmodifiableNewScopes = newScopes.stream().collect(Collectors.toUnmodifiableSet());
-					claims.put("scope", unmodifiableNewScopes);
+//					Set<String> newScopes = new HashSet<>(unmodifiableScopeSet)
+//							.stream()
+//							.filter(userAuthorities::contains).collect(Collectors.toSet());
+//					newScopes.addAll(userAuthorities);
+//					Set<String> unmodifiableNewScopes = newScopes.stream().collect(Collectors.toUnmodifiableSet());
+//					claims.put("scope", unmodifiableNewScopes);
+					claims.put("authority",  userAuthorities);
 				});
 			}
 		};
