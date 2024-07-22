@@ -220,13 +220,13 @@ public class AuthorizationServerConfig {
 		return source;
 	}
 
-	@Bean
-	public OAuth2TokenGenerator<?> tokenGenerator() {
-		JwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource());
-		JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
-		OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
-		CustomOAuth2RefreshTokenGenerator refreshTokenGenerator = new CustomOAuth2RefreshTokenGenerator();
-		return new DelegatingOAuth2TokenGenerator(
-				jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
-	}
+//	@Bean
+//	public OAuth2TokenGenerator<?> tokenGenerator() {
+//		JwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource());
+//		JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
+//		OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
+//		CustomOAuth2RefreshTokenGenerator refreshTokenGenerator = new CustomOAuth2RefreshTokenGenerator();
+//		return new DelegatingOAuth2TokenGenerator(
+//				jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
+//	}
 }

@@ -24,7 +24,8 @@ const authCodeFlowConfig: AuthConfig = {
   // is a sign that the auth server is not configured with SPAs in mind
   // and it might not enforce further best practices vital for security
   // such applications.
-  // dummyClientSecret: 'secret',
+  dummyClientSecret: 'secret',
+  useHttpBasicAuth: true,
   responseType: 'code',
   // set the scope for the permissions the client should request
   // Important: Request offline_access to get a refresh token
